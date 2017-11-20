@@ -12,6 +12,7 @@ module.exports = {
       path.resolve(__dirname, 'src')
     ]
   },
+  target: "electron",
   devServer: {
     contentBase: './',
     publicPath: 'http://localhost:8080/'
