@@ -1,11 +1,10 @@
 const { ipcMain } = require('electron')
 const os = require('os');
-const storage = require('electron-json-storage');
 
 const bittrexApp = require('./bittrex')
+const storage = require('electron-json-storage');
 
 storage.setDataPath(os.tmpdir());
-
 
 ipcMain.on('store-api', (event, data) => {
 
@@ -17,8 +16,6 @@ ipcMain.on('store-api', (event, data) => {
 })
 
 ipcMain.on('check-storage', (event, data) => {
-	console.log('store-api', os.tmpdir())
-	
 	storage.get('apiInfo', (err, data) => {
 		if (err) throw err
 		bittrexApp.init(data)

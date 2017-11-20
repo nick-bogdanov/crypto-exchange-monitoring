@@ -43,7 +43,9 @@
   "dependencies": {
     "electron-json-storage": "^4.0.2",
     "node.bittrex.api": "^1.0.0",
+    "nodemailer": "^4.4.0",
     "react": "^15.3.1",
-    "react-dom": "^15.3.1"
+    "react-dom": "^15.3.1",
+    "uuid": "^3.1.0"
   }
 }

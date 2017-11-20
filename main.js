@@ -20,8 +20,8 @@ function createWindow () {
       .then((name) => console.log(`Added Extension:  ${name}`))
       .catch((err) => console.log('An error occurred: ', err));
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
-
+  mainWindow = new BrowserWindow()
+  mainWindow.maximize()
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
 

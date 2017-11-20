@@ -8,8 +8,16 @@
 	align-items: center; /*centers items on the cross-axis (y by default)*/
 }
 
-.api-form {
+.form-width {
 	width:25%;
+}
+
+.green {
+	color: #82b74b;
+}
+
+.red {
+	color: #c94c4c;
 }
 
 .content-margin {

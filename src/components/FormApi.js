@@ -25,7 +25,7 @@ export class FormApi extends React.Component {
 	render() {
 		return (
 			<div className='center-page'>
-				<form onSubmit={this.submit.bind(this)} className='api-form'>
+				<form onSubmit={this.submit.bind(this)} className='form-width'>
 					<h1>Bittrex</h1>
 					<div className="form-group">
 						<label>Email</label>

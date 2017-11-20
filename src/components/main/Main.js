@@ -5,16 +5,14 @@ import { Content } from './Content'
 export class Main extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = { currency: '' }
+		this.state = { currency: 'USDT-BTC' }
 	}
 
 	selectedCurrency(currency) {
 		this.setState({ currency })
 	}
 
-
 	render() {
-
 		return (
 			<div className='window'>
 				<div className='window-content'>
