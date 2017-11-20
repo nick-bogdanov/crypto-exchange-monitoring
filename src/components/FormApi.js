@@ -11,8 +11,8 @@ export class FormApi extends React.Component {
 		
 		const apiData = {
 			email: this.refs.email.value,
-			apiKey: this.refs.apiKey.value,
-			apiSecret: this.refs.apiSecret.value
+			// apiKey: this.refs.apiKey.value,
+			// apiSecret: this.refs.apiSecret.value
 		}
 
 		ipcRenderer.send('store-api', apiData)
