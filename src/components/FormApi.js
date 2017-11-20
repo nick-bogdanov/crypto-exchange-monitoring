@@ -26,19 +26,19 @@ export class FormApi extends React.Component {
 		return (
 			<div className='center-page'>
 				<form onSubmit={this.submit.bind(this)} className='api-form'>
-					<h1>Bittrex keys</h1>
+					<h1>Bittrex</h1>
 					<div className="form-group">
 						<label>Email</label>
 						<input type="email" className="form-control" required ref='email' placeholder="Email" />
 					</div>
-					<div className="form-group">
+					{/* <div className="form-group">
 						<label>Api Key</label>
 						<input type="text" className="form-control" required ref='apiKey' placeholder="Api Key" />
 					</div>
 					<div className="form-group">
 						<label>Api Secret</label>
 						<input type="text" className="form-control" required ref='apiSecret' placeholder="Api Secret" />
-					</div>
+					</div> */}
 					<button className="btn btn-positive">Submit</button>
 				</form>
 			</div>

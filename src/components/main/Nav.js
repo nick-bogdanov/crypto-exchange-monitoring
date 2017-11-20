@@ -5,8 +5,8 @@ const { ipcRenderer } = require('electron')
 export class Nav extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = { currencies: [] }
-
+		this.state = { currencies: [], activeLink: '' }
+		this.currencies = []
 		this.getMenuItems()
 
 	}
@@ -23,28 +23,50 @@ export class Nav extends React.Component {
 				return 0;
 			}
 
-			const result = data.sort(compare);
+			this.currencies = data.sort(compare);
 
-			this.setState({ currencies: result })
+			this.setState({ currencies: this.currencies })
 		})
 
+	}
+
+	selectCurrency(currency) {
+		this.setState({ activeLink: currency })
+		this.props.selectedCurrency(currency)
+	}
+
+	filterCurrencies(e) {
+		const copy = JSON.parse(JSON.stringify(this.currencies));
+		const filter = e.target.value;
+		let filtered = []
+
+		copy.forEach((el) => {
+			let element = el.Currency
+			if (element.toUpperCase().indexOf(filter.toUpperCase()) !== -1) {
+				filtered.push(el)
+			}
+		});
+
+		this.setState({ currencies: filtered })
 	}
 
 	render() {
 
 		return (
-			<div className='pane-group'>
-				<div className='pane pane-sm sidebar'>
-					<nav className="nav-group">
-						<h5 className="nav-group-title">Currencies</h5>
-						{this.state.currencies.map(function (value) {
-							return <a key={value.Currency} className="nav-group-item">
-								{value.Currency}
-							</a>;
-						})}
+			<div className='pane pane-sm sidebar'>
+				<nav className="nav-group">
+					<h5 className="nav-group-title">Currencies</h5>
+					<div className="nav-group-item form-group">
+						<input type="text" onKeyUp={this.filterCurrencies.bind(this)} className='form-control' placeholder='Search' />
+					</div>
+					{this.state.currencies.map((value) => {
+						return <a key={value.Currency} onClick={() => { this.selectCurrency(value.Currency) }}
+							className={value.Currency === this.state.activeLink ? 'nav-group-item active' : 'nav-group-item'}>
+							{value.Currency}
+						</a>;
+					})}
 
-					</nav>
-				</div>
+				</nav>
 			</div>
 		)
 	}
