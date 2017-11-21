@@ -6,7 +6,8 @@
   "scripts": {
     "start": "concurrently --kill-others \"npm run hot\" \"npm run preview\"",
     "hot": "webpack-dev-server",
-    "preview": "electron main.js"
+    "preview": "electron main.js",
+    "package": "electron-packager ./ BittrexWatcher --platform=win32,darwin --out ~/Desktop/BittrexWatcher --version 0.1 --overwrite"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,7 @@
     "devtron": "^1.3.0",
     "electron": "^1.3.4",
     "electron-devtools-installer": "^2.0.1",
+    "electron-packager": "^10.1.0",
     "file-loader": "^0.9.0",
     "json-loader": "^0.5.4",
     "webpack": "^1.13.1",

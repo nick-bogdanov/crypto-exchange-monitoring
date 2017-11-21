@@ -28,7 +28,7 @@ export class FormApi extends React.Component {
 				<form onSubmit={this.submit.bind(this)} className='form-width'>
 					<h1>Bittrex</h1>
 					<div className="form-group">
-						<label>Email</label>
+						<label>Email which will be used for getting notifications</label>
 						<input type="email" className="form-control" required ref='email' placeholder="Email" />
 					</div>
 					{/* <div className="form-group">

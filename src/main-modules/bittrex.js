@@ -26,7 +26,6 @@ bittrexApp.getCurrency = function (event, market) {
 	// });
 	bittrex.getmarketsummary({ market: market }, function (data, err) {
 		if (err) throw err
-		console.log(data.result[0])
 		event.send('get-currency', data.result[0])
 	})
 }

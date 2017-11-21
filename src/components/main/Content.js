@@ -5,19 +5,16 @@ const uuidv1 = require('uuid/v1');
 export class Content extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = { currencyInfo: { MarketName: 'USDT-BTC' }, content: '' }
+		this.state = { currencyInfo: { MarketName: 'USDT-BTC' } }
 		this.Low = '';
 		this.Last = '';
 		this.getCurrencyInfo()
 		this.times = 0
-		this.watcher = { active: false }
+		this.watcher = { active: false, currency: '', Low: 0, Last:0  }
 
 		ipcRenderer.on('get-currency', (event, data) => {
-			const content = Object.keys(data).map(function (key) {
-				return <p key={uuidv1()}>{key}: {data[key].toString()}</p>
-			})
 
-			this.setState({ currencyInfo: data, content })
+			this.setState({ currencyInfo: data })
 
 			if (this.times === 0) {
 				this.refs.Low.value = data.Low.toFixed(10)
@@ -44,6 +41,8 @@ export class Content extends React.Component {
 	componentWillReceiveProps(props) {
 		clearInterval(this.id)
 		this.getCurrencyInfo(props.currency)
+		ipcRenderer.send('destroy-timer')
+		this.times = 0
 	}
 
 	watch() {
@@ -58,26 +57,37 @@ export class Content extends React.Component {
 			if (this.refs.Last.value)
 				this.watcher.Last = this.refs.Last.value
 
-			// ipcRenderer.send('watch-for-currency', {currency: self.props.currency})
 		}
 	}
 
 	startObserve(current) {
 		if (this.watcher.active) {
-			if (this.watcher.Last && (current.Last >= this.watcher.Last)) {
-				ipcRenderer.send('watch-for-currency', { currency: self.props.currency, type: 'Big' })
+			if (this.watcher.Last && (this.watcher.Last >= current.Last)) {
+				console.log(`Observed price ${this.watcher.Last} are BIGGER than current ${current.Last}?:`, this.watcher.Last && (current.Last >= this.watcher.Last))
+				console.log('****EMAIL has been Sent****')
+				ipcRenderer.send('watch-for-currency', { currency: this.props.currency, type: 'Big', value: this.watcher.Last })
 			}
-
-			if (this.watcher.Low && (current.Low >= this.watcher.Low)) {
-				ipcRenderer.send('watch-for-currency', { currency: self.props.currency, type: 'Small' })
+			if (this.watcher.Low && (this.watcher.Low >= current.Low)) {
+				console.log(`Observer price ${this.watcher.Low} are LOWER than current ${current.Low}?:`, this.watcher.Last && (current.Last >= this.watcher.Last))
+				console.log('****EMAIL has been Sent****')
+				ipcRenderer.send('watch-for-currency', { currency: this.props.currency, type: 'Small', value: this.watcher.Low })
 			}
 		}
+	}
+
+	destroy() {
+		this.watcher.active = false;
+		ipcRenderer.send('destroy-timer')
 	}
 
 	render() {
 		return (
 			<div className='pane content-margin'>
-				<h1>{this.state.currencyInfo.MarketName}</h1>
+				<h1>{this.state.currencyInfo.MarketName} Time: {new Date().toTimeString()}</h1>
+				{this.watcher.active 
+					? <h2 className='green'>Watching</h2>
+					: ''
+				}
 				<div className='form-group form-width'>
 					<h4>Notify me when {this.state.currencyInfo.MarketName.replace(/.*-/gi, '')} will be <span className='green'>bigger</span> than</h4>
 					<input type="number" className="form-control" required ref='Last' placeholder="Buy bigger" />
@@ -87,7 +97,24 @@ export class Content extends React.Component {
 					<input type="number" className="form-control" required ref='Low' placeholder="Sold small" />
 				</div>
 				<button onClick={this.watch.bind(this)} className="btn btn-positive">Watch</button>
-				{this.state.content}
+				{this.watcher.active 
+					? <button onClick={this.destroy.bind(this)} className="btn btn-primary">Destroy</button>
+					: ''
+				}
+				<hr/>
+
+				<h2>Prices</h2>
+				<p>Last Price: { this.state.currencyInfo.Last }</p>
+				<p>Low Price: { this.state.currencyInfo.Low }</p>
+				<p>Bid Price: { this.state.currencyInfo.Bid }</p>
+				<p>Ask Price: { this.state.currencyInfo.Ask }</p>
+				<hr/>
+
+				<h2>Volumes</h2>
+				<p>Volume: { this.state.currencyInfo.BaseVolume }</p>
+				<p>Volume 24h: { this.state.currencyInfo.Volume }</p>
+
+
 			</div>
 		)
 	}

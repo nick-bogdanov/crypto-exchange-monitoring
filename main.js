@@ -2,6 +2,7 @@ const electron = require('electron')
 
 const storageModule = require('./src/main-modules/storage')
 const marketApiCallsModule = require('./src/main-modules/market')
+const mailWacther = require('./src/main-modules/mail/')
 
 // Module to control application life.
 const app = electron.app
