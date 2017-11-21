@@ -6,14 +6,27 @@ export class Content extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = { currencyInfo: { MarketName: 'USDT-BTC' }, content: '' }
-
+		this.Low = '';
+		this.Last = '';
 		this.getCurrencyInfo()
+		this.times = 0
+		this.watcher = { active: false }
 
 		ipcRenderer.on('get-currency', (event, data) => {
 			const content = Object.keys(data).map(function (key) {
 				return <p key={uuidv1()}>{key}: {data[key].toString()}</p>
 			})
+
 			this.setState({ currencyInfo: data, content })
+
+			if (this.times === 0) {
+				this.refs.Low.value = data.Low.toFixed(10)
+				this.refs.Last.value = data.Last.toFixed(10)
+				this.times = 1;
+			}
+
+			this.startObserve(data)
+
 		})
 	}
 
@@ -21,7 +34,6 @@ export class Content extends React.Component {
 		var self = this
 		function timer() {
 			return setInterval(() => {
-				console.log(self.props.currency)
 				ipcRenderer.send('get-currency-info', { currency: props || self.props.currency })
 			}, 1000)
 		}
@@ -35,7 +47,31 @@ export class Content extends React.Component {
 	}
 
 	watch() {
-		ipcRenderer.send('watch-for-currency', {currency: self.props.currency})
+		const notEmpty = this.refs.Low.value || this.refs.Last.value
+		if (notEmpty) {
+			this.watcher.active = true;
+			this.watcher.currency = this.props.currency;
+
+			if (this.refs.Low.value)
+				this.watcher.Low = this.refs.Low.value
+
+			if (this.refs.Last.value)
+				this.watcher.Last = this.refs.Last.value
+
+			// ipcRenderer.send('watch-for-currency', {currency: self.props.currency})
+		}
+	}
+
+	startObserve(current) {
+		if (this.watcher.active) {
+			if (this.watcher.Last && (current.Last >= this.watcher.Last)) {
+				ipcRenderer.send('watch-for-currency', { currency: self.props.currency, type: 'Big' })
+			}
+
+			if (this.watcher.Low && (current.Low >= this.watcher.Low)) {
+				ipcRenderer.send('watch-for-currency', { currency: self.props.currency, type: 'Small' })
+			}
+		}
 	}
 
 	render() {
@@ -44,11 +80,11 @@ export class Content extends React.Component {
 				<h1>{this.state.currencyInfo.MarketName}</h1>
 				<div className='form-group form-width'>
 					<h4>Notify me when {this.state.currencyInfo.MarketName.replace(/.*-/gi, '')} will be <span className='green'>bigger</span> than</h4>
-					<input type="number" value={this.state.currencyInfo.Last || 0} className="form-control" required ref='email' placeholder="Buy bigger" />
+					<input type="number" className="form-control" required ref='Last' placeholder="Buy bigger" />
 				</div>
 				<div className='form-group form-width'>
 					<h4>Notify me when {this.state.currencyInfo.MarketName.replace(/.*-/gi, '')} will be <span className='red'>lower</span> than</h4>
-					<input type="number" value={this.state.currencyInfo.Low || 0} className="form-control" required ref='email' placeholder="Sold small" />
+					<input type="number" className="form-control" required ref='Low' placeholder="Sold small" />
 				</div>
 				<button onClick={this.watch.bind(this)} className="btn btn-positive">Watch</button>
 				{this.state.content}
